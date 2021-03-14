@@ -32,23 +32,6 @@ stages {
               }
                 }
          }
-        stage("Build") {
-           steps {
-       script {
-            FAILED_STAGE=env.STAGE_NAME
-        build= "${readProb['Build']}"
-                if ("$build" == "yes") {
-               sh """
-                cd devsecopscodebase/
-                    mvn clean install
-                   """
-            }
-                 else {
-                   echo "Skipped"
-                    }
-                   }
-                 }
-        }
      stage('SonarQube analysis') {
           steps {
             script {
@@ -57,7 +40,7 @@ stages {
                   SonarQube= "${readProb['SonarQube_Analysis']}"
                 if ("$SonarQube" == "yes") {
           withSonarQubeEnv('sonarqube') {
-          sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${readProb['sonar_projectKey']} -Dsonar.projectName=${readProb['sonar_projectName']} -Dsonar.projectVersion=${readProb['sonar_projectVersion']} -Dsonar.projectBaseDir=${readProb['sonar_projectBaseDir']} -Dsonar.sources=${readProb['sonar_sources']} "
+          sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${readProb['sonar_projectKey']} -Dsonar.projectName=${readProb['sonar_projectName']} -Dsonar.projectVersion=${readProb['sonar_projectVersion']} -Dsonar.projectBaseDir=${readProb['sonar_projectBaseDir']} -Dsonar.sources=${readProb['sonar_sources']} -Dsonar.java.binaries=${readProb['sonar_binaries']}"
            }
             }
                 else {
@@ -82,5 +65,40 @@ stages {
                    }
          }
        }
+
+    
+        stage("test") {
+           steps {
+       script {
+            FAILED_STAGE=env.STAGE_NAME
+        build= "${readProb['Build']}"
+                if ("$build" == "yes") {
+               sh """
+               cd devsecopscodebase/
+               mvn clean test
+                   """
+            }
+                 else {
+                   echo "Skipped"
+                    }
+                   }
+                 }
+        }
+  
     }
+  post {
+      success {
+          
+            publishHTML target: [
+            allowMissing: false,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: 'devsecopscodebase/TestReport',
+            reportFiles: 'TestReport.html',
+            reportName: 'Dev_Testng_Report'
+              ]
+
+
+            }
+        }
 }

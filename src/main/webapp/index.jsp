@@ -8,12 +8,12 @@
 </head>
 <body>
 <center>
-<h1>This is a ZippyOPS Demo Application ! ! !</h1>
+<h1>This is a ZippyOPS Demo Application<h1>
 <img alt="" src="zippy.png">
-<h3>
+<h4>
 
-This is a Java App deployed by Ansible on <%out.println(System.getProperty("os.name"));%> at <%= (new java.util.Date()).toLocaleString()%> for ZippyOPS Demo
-</h3>
+This is a Java App deployed by  Kubernetes on  <%out.println(System.getProperty("os.name"));%> at <%= (new java.util.Date()).toLocaleString()%> for validation***.
+</h4>
 </center>
 </body>
 </html>
